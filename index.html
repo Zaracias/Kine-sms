@@ -3,13 +3,14 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
   <title>Kiné SMS</title>
   <style>
     body {
       font-family: -apple-system, sans-serif;
       text-align: center;
-      padding: 50px 20px;
+      padding: 40px 20px;
     }
     button {
       background: #1677ee;
@@ -18,21 +19,80 @@
       border-radius: 12px;
       padding: 18px 24px;
       font-size: 18px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #aaa;
+    }
+    #resume {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      text-align: left;
+      max-width: 500px;
+      margin: 24px auto;
+      padding: 16px;
+      background: #f3f4f6;
+      border-radius: 12px;
     }
   </style>
 </head>
 <body>
   <h2>Kiné SMS</h2>
-  <p>Test de lancement du raccourci iPhone.</p>
-  <button onclick="lancer()">Ouvrir SMS patients Kiné</button>
+  <p>Vérifie le lot avant de lancer le raccourci.</p>
+
+  <div id="resume"></div>
+
+  <button id="lancer" disabled>
+    Lancer les SMS
+  </button>
 
   <script>
-    function lancer() {
-      window.location.href =
-        "shortcuts://run-shortcut?name=" +
-        encodeURIComponent("SMS patients Kiné");
+    // Le lot est transmis dans le fragment de l'URL.
+    // Il n'est pas envoyé au serveur GitHub Pages.
+    const params = new URLSearchParams(
+      window.location.hash.slice(1)
+    );
+
+    const numeros = params.get("numeros") || "";
+    const message = params.get("message") || "";
+
+    const liste = numeros
+      .split(",")
+      .map(n => n.trim())
+      .filter(Boolean);
+
+    const valides = liste.length > 0 &&
+      liste.every(n => /^0[67]\d{8}$/.test(n));
+
+    const resume = document.getElementById("resume");
+    const bouton = document.getElementById("lancer");
+
+    if (valides && message.trim()) {
+      resume.textContent =
+        "Destinataires :\n" +
+        liste.join("\n") +
+        "\n\nMessage :\n" + message;
+
+      bouton.disabled = false;
+
+      bouton.addEventListener("click", () => {
+        const texte =
+          liste.join("\n") +
+          "\n---\n" +
+          message;
+
+        const url =
+          "shortcuts://run-shortcut?name=" +
+          encodeURIComponent("SMS patients Kiné") +
+          "&input=text&text=" +
+          encodeURIComponent(texte);
+
+        window.location.href = url;
+      });
+    } else {
+      resume.textContent =
+        "Aucun lot valide à envoyer.";
     }
   </script>
 </body>
 </html>
-
