@@ -1,1 +1,38 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kiné SMS</title>
+  <style>
+    body {
+      font-family: -apple-system, sans-serif;
+      text-align: center;
+      padding: 50px 20px;
+    }
+    button {
+      background: #1677ee;
+      color: white;
+      border: 0;
+      border-radius: 12px;
+      padding: 18px 24px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Kiné SMS</h2>
+  <p>Test de lancement du raccourci iPhone.</p>
+  <button onclick="lancer()">Ouvrir SMS patients Kiné</button>
+
+  <script>
+    function lancer() {
+      window.location.href =
+        "shortcuts://run-shortcut?name=" +
+        encodeURIComponent("SMS patients Kiné");
+    }
+  </script>
+</body>
+</html>
+
